@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:icon="@drawable/ic_home_black_24dp" android:id="@+id/navigation_welcome" android:title="@string/title_welcome"/>
+    <item android:icon="@drawable/ic_dashboard_black_24dp" android:id="@+id/add_lock" android:title="@string/title_add_lock"/>
+    <item android:icon="@drawable/ic_notifications_black_24dp" android:id="@+id/navigation_help" android:title="@string/title_help"/>
+    <item android:icon="@drawable/ic_notifications_black_24dp" android:id="@+id/navigation_about" android:title="@string/title_about"/>
+    <item android:icon="@drawable/ic_notifications_black_24dp" android:id="@+id/new_firmware" android:title="@string/title_new_firmware"/>
+</menu>

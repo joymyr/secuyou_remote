@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:theme="@style/Widget.AppCompat.ActionMode" android:orientation="vertical" android:id="@+id/welcome" android:background="@drawable/ic_launcher_background" android:layout_width="match_parent" android:layout_height="match_parent" android:baselineAligned="false" android:animateLayoutChanges="false">
+    <androidx.cardview.widget.CardView android:clipToPadding="true" android:layout_width="250dp" android:layout_height="wrap_content" android:layout_centerInParent="true" app:cardBackgroundColor="#292b2b" app:cardCornerRadius="10dp">
+        <LinearLayout android:orientation="vertical" android:clipChildren="false" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="40dp" android:layout_marginRight="40dp" android:layout_centerVertical="true">
+            <Button android:textSize="24sp" android:textColor="@android:color/white" android:id="@+id/home" android:background="#292b2b" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp" android:text="@string/HOME" android:selectAllOnFocus="false" android:layout_alignStart="@+id/add_lock"/>
+            <Button android:textSize="24sp" android:textColor="@android:color/white" android:id="@+id/add_lock" android:background="#292b2b" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/title_add_lock"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <ImageView android:id="@+id/secuyou_logo" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp" android:src="@drawable/ic_launcher_foreground" android:adjustViewBounds="false" android:cropToPadding="false" android:layout_alignParentBottom="true" android:contentDescription="@string/secuyou_logo"/>
+</RelativeLayout>
