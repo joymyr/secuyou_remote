@@ -37,7 +37,7 @@
     <string name="actionbutton">actionButton</string>
     <string name="app_os">App</string>
     <string name="appbar_scrolling_view_behavior">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
-    <string name="appname">Secuyou Reverse</string>
+    <string name="appname">Secuyou Remote</string>
     <string name="appversion">appversion</string>
     <string name="arrow">arrow</string>
     <string name="backgroundpicture">backgroundpicture</string>

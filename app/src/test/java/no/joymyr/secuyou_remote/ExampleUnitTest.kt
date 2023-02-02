@@ -1,4 +1,4 @@
-package no.joymyr.secuyou_reverse
+package no.joymyr.secuyou_remote
 
 import org.junit.Test
 

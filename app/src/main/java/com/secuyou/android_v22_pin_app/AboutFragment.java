@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import no.joymyr.secuyou_reverse.BuildConfig;
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.BuildConfig;
+import no.joymyr.secuyou_remote.R;
 
 /* loaded from: classes.dex */
 public class AboutFragment extends Fragment {

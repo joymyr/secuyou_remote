@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.R;
 import no.nordicsemi.android.dfu.internal.ArchiveInputStream;
 import no.nordicsemi.android.dfu.internal.HexInputStream;
 /* loaded from: classes.dex */

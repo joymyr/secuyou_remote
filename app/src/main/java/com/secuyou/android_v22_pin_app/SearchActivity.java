@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.R;
 
 /* loaded from: classes.dex */
 public class SearchActivity extends AppCompatActivity implements searchFragment.OnListFragmentInteractionListener, selectPin.OnFragmentInteractionListener {

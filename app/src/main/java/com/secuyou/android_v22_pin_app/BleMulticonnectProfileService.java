@@ -1,5 +1,7 @@
 package com.secuyou.android_v22_pin_app;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -14,12 +16,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.nio.ByteBuffer;
@@ -28,7 +32,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import no.joymyr.secuyou_remote.RemoteClient;
+
 /* loaded from: classes.dex */
+@SuppressLint("MissingPermission")
 public final class BleMulticonnectProfileService extends Service implements BleManagerCallbacks {
     public static final String BROADCAST_BATTERY_LEVEL = "com.secuyou.android_v22_pin_app.BROADCAST_BATTERY_LEVEL";
     public static final String BROADCAST_BOND_STATE = "com.secuyou.android_v22_pin_app.BROADCAST_BOND_STATE";
@@ -78,6 +86,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
     private List<BluetoothDevice> mManagedDevices;
     private boolean mScanning;
     public BleManager manager_new_device;
+    public RemoteClient remoteClient;
     private Handler scan_handler;
     private final BroadcastReceiver mBluetoothStateBroadcastReceiver = new BroadcastReceiver() { // from class: com.secuyou.android_v22_pin_app.BleMulticonnectProfileService.1
         @Override // android.content.BroadcastReceiver
@@ -207,6 +216,11 @@ public final class BleMulticonnectProfileService extends Service implements BleM
             return null;
         }
 
+        public void lock_unlock(BluetoothDevice bluetoothDevice) {
+            byte[] bArr = {1};
+            BleMulticonnectProfileService.this.mBleManagers.get(bluetoothDevice).writeLockCmd(bArr);
+        }
+
         public String getBatteryStringValue(BluetoothDevice bluetoothDevice) {
             return BleMulticonnectProfileService.this.mBleManagers.get(bluetoothDevice).getBatteryValue().getStringValue();
         }
@@ -309,6 +323,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         this.mBleManagers = new HashMap<>();
         this.mManagedDevices = new ArrayList();
         this.manager_new_device = new BleManager(this);
+        this.remoteClient = new RemoteClient(context, getBinder());
         getLockStoredSpecs();
         registerReceiver(this.mBluetoothStateBroadcastReceiver, new IntentFilter("android.bluetooth.adapter.action.STATE_CHANGED"));
         onServiceCreated();
@@ -324,7 +339,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         this.mLocksFWSharedPreferences = getSharedPreferences(LOCK_LIST_PREF_FWVERSION, 0);
         new HashMap();
         Map<String, ?> all3 = this.mLocksFWSharedPreferences.getAll();
-        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService("bluetooth");
+        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         for (String str : all.keySet()) {
             BleManager bleManager = new BleManager(this);
@@ -370,7 +385,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
     @Override // android.app.Service
     public int onStartCommand(Intent intent, int i, int i2) {
         onServiceStarted();
-        return 1;
+        return Service.START_STICKY;
     }
 
     @Override // android.app.Service
@@ -435,6 +450,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_CONNECTION_STATE, 2);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onDeviceConnecting(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -443,6 +459,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_CONNECTION_STATE, 1);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onDeviceConnected(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -451,6 +468,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_CONNECTION_STATE, 3);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onDeviceDisconnecting(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -459,6 +477,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_CONNECTION_STATE, 0);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onDeviceDisconnected(bluetoothDevice);
         if (this.mBinded || !this.mManagedDevices.isEmpty()) {
             return;
         }
@@ -471,6 +490,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_CONNECTION_STATE, -1);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onLinkLossOccur(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -480,6 +500,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_SERVICE_PRIMARY, true);
         intent.putExtra(EXTRA_SERVICE_SECONDARY, z);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onServicesDiscovered(bluetoothDevice, z);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -487,6 +508,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         Intent intent = new Intent(BROADCAST_DEVICE_READY);
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onDeviceReady(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -498,6 +520,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_SERVICE_PRIMARY, false);
         intent.putExtra(EXTRA_SERVICE_SECONDARY, false);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onDeviceNotSupported(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -506,6 +529,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_LOCKNAME, bArr);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onLockNameValueReceived(bluetoothDevice, bArr);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -514,6 +538,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_LOCKVERSION, bArr);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onLockModelValueReceived(bluetoothDevice, bArr);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -522,6 +547,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_LOCKSERIAL, bArr);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onLockSerialValueReceived(bluetoothDevice, bArr);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -530,6 +556,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_LOCKFIRMWARE, bArr);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onLockFirmwareValueReceived(bluetoothDevice, bArr);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -538,6 +565,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_LOCKSTATUS, bArr);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onLockstatusValueReceived(bluetoothDevice, bArr);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -546,6 +574,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_LOCKSTATE, bArr);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onLockStateValueReceived(bluetoothDevice, bArr);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -554,6 +583,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_BOND_STATE, 11);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onBondingRequired(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -562,6 +592,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_DEVICE, bluetoothDevice);
         intent.putExtra(EXTRA_BOND_STATE, 12);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onBonded(bluetoothDevice);
     }
 
     @Override // com.secuyou.android_v22_pin_app.BleManagerCallbacks
@@ -571,13 +602,14 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         intent.putExtra(EXTRA_ERROR_MESSAGE, str);
         intent.putExtra(EXTRA_ERROR_CODE, i);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        remoteClient.onError(bluetoothDevice, str, i);
     }
 
     protected void showToast(final int i) {
         this.mHandler.post(new Runnable() { // from class: com.secuyou.android_v22_pin_app.BleMulticonnectProfileService.4
             @Override // java.lang.Runnable
             public void run() {
-                Toast.makeText(BleMulticonnectProfileService.this, i, 0).show();
+                Toast.makeText(BleMulticonnectProfileService.this, i, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -586,7 +618,7 @@ public final class BleMulticonnectProfileService extends Service implements BleM
         this.mHandler.post(new Runnable() { // from class: com.secuyou.android_v22_pin_app.BleMulticonnectProfileService.5
             @Override // java.lang.Runnable
             public void run() {
-                Toast.makeText(BleMulticonnectProfileService.this, str, 0).show();
+                Toast.makeText(BleMulticonnectProfileService.this, str, Toast.LENGTH_SHORT).show();
             }
         });
     }

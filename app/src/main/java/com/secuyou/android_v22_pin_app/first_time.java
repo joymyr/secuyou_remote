@@ -10,7 +10,7 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.R;
 
 /* loaded from: classes.dex */
 public class first_time extends Fragment {

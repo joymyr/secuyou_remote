@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import java.lang.reflect.Field;
 
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.R;
 
 /* loaded from: classes.dex */
 public class selectPin extends Fragment {

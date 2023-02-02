@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.R;
 
 /* loaded from: classes.dex */
 public class devicesSpecFragment extends Fragment implements DeviceSpecAdapter.ClickListener {

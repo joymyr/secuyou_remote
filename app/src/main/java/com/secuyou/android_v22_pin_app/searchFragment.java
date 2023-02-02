@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.R;
 
 /* loaded from: classes.dex */
 public class searchFragment extends Fragment implements SearchAdapter.ClickListener {

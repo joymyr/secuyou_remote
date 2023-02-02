@@ -262,9 +262,9 @@
 //        public static final int GradientColor_android_startY = 0x00000009;
 //        public static final int GradientColor_android_tileMode = 0x00000006;
 //        public static final int GradientColor_android_type = 0x00000002;
-//        public static final int[] ColorStateListItem = {16843173, 16843551, no.joymyr.secuyou_reverse.R.attr.alpha};
-//        public static final int[] FontFamily = {no.joymyr.secuyou_reverse.R.attr.fontProviderAuthority, no.joymyr.secuyou_reverse.R.attr.fontProviderCerts, no.joymyr.secuyou_reverse.R.attr.fontProviderFetchStrategy, no.joymyr.secuyou_reverse.R.attr.fontProviderFetchTimeout, no.joymyr.secuyou_reverse.R.attr.fontProviderPackage, no.joymyr.secuyou_reverse.R.attr.fontProviderQuery};
-//        public static final int[] FontFamilyFont = {16844082, 16844083, 16844095, 16844143, 16844144, no.joymyr.secuyou_reverse.R.attr.font, no.joymyr.secuyou_reverse.R.attr.fontStyle, no.joymyr.secuyou_reverse.R.attr.fontVariationSettings, no.joymyr.secuyou_reverse.R.attr.fontWeight, no.joymyr.secuyou_reverse.R.attr.ttcIndex};
+//        public static final int[] ColorStateListItem = {16843173, 16843551, no.joymyr.secuyou_remote.R.attr.alpha};
+//        public static final int[] FontFamily = {no.joymyr.secuyou_remote.R.attr.fontProviderAuthority, no.joymyr.secuyou_remote.R.attr.fontProviderCerts, no.joymyr.secuyou_remote.R.attr.fontProviderFetchStrategy, no.joymyr.secuyou_remote.R.attr.fontProviderFetchTimeout, no.joymyr.secuyou_remote.R.attr.fontProviderPackage, no.joymyr.secuyou_remote.R.attr.fontProviderQuery};
+//        public static final int[] FontFamilyFont = {16844082, 16844083, 16844095, 16844143, 16844144, no.joymyr.secuyou_remote.R.attr.font, no.joymyr.secuyou_remote.R.attr.fontStyle, no.joymyr.secuyou_remote.R.attr.fontVariationSettings, no.joymyr.secuyou_remote.R.attr.fontWeight, no.joymyr.secuyou_remote.R.attr.ttcIndex};
 //        public static final int[] GradientColor = {16843165, 16843166, 16843169, 16843170, 16843171, 16843172, 16843265, 16843275, 16844048, 16844049, 16844050, 16844051};
 //        public static final int[] GradientColorItem = {16843173, 16844052};
 //

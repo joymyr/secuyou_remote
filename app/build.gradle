@@ -3,14 +3,17 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
-    namespace 'no.joymyr.secuyou_reverse'
-    compileSdk 32
+    namespace 'no.joymyr.secuyou_remote'
+    compileSdk 33
 
     defaultConfig {
-        applicationId "no.joymyr.secuyou_reverse"
+        applicationId "no.joymyr.secuyou_remote"
         minSdk 26
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -21,6 +24,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        all {
+            resValue("string", "mqtt_uri", localProperties['mqttUri'])
+            resValue("string", "mqtt_username", localProperties['mqttUsername'])
+            resValue("string", "mqtt_password", localProperties['mqttPassword'])
+            resValue("string", "mqtt_main_topic", localProperties['mqttMainTopic'])
+            resValue("string", "mqtt_inclusion_topic", localProperties['mqttInclusionTopic'])
+            resValue("string", "mqtt_lock_event_topic", localProperties['mqttLockEventTopic'])
+            resValue("string", "mqtt_battery_event_topic", localProperties['mqttBatteryEventTopic'])
+            resValue("string", "mqtt_alarm_event_topic", localProperties['mqttAlarmEventTopic'])
+            resValue("string", "mqtt_lock_command_topic", localProperties['mqttLockCommandTopic'])
         }
     }
     compileOptions {
@@ -34,11 +48,12 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.github.hannesa2:paho.mqtt.android:3.5.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

@@ -1,4 +1,4 @@
-package no.joymyr.secuyou_reverse
+package no.joymyr.secuyou_remote
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("no.joymyr.secuyou_reverse", appContext.packageName)
+        assertEquals("no.joymyr.secuyou_remote", appContext.packageName)
     }
 }

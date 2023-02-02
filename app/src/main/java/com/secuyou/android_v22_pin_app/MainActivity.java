@@ -19,13 +19,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -40,8 +40,8 @@ import com.secuyou.android_v22_pin_app.BleMulticonnectProfileService.LocalBinder
 
 import java.util.HashMap;
 
-import no.joymyr.secuyou_reverse.BuildConfig;
-import no.joymyr.secuyou_reverse.R;
+import no.joymyr.secuyou_remote.BuildConfig;
+import no.joymyr.secuyou_remote.R;
 
 /* loaded from: classes.dex */
 public class MainActivity<E extends LocalBinder> extends AppCompatActivity implements devicesFragment.OnFragmentInteractionListener, devicesSpecFragment.OnFragmentInteractionListener, fragment_lockSpec.OnFragmentInteractionListener, first_time.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener {
@@ -304,16 +304,16 @@ public class MainActivity<E extends LocalBinder> extends AppCompatActivity imple
         if (deviceSpecAdapter != null) {
             deviceSpecAdapter.onLockstatusValueReceived(bluetoothDevice);
         }
-        if (mBluetoothLeService.mBleManagers.isEmpty() || mBluetoothLeService.getBleManager(bluetoothDevice) == null || mBluetoothLeService.getBleManager(bluetoothDevice).getBatteryValue() == BleLockState.BATTERY_STATUS.BATTERY_GOOD || mBluetoothLeService.getBleManager(bluetoothDevice).mLock.getBleLockState().mState != BleLockState.STATE_DEVICE.KEY_CONFIRMATION) {
+        if (mBluetoothLeService == null || mBluetoothLeService.mBleManagers.isEmpty() || mBluetoothLeService.getBleManager(bluetoothDevice) == null || mBluetoothLeService.getBleManager(bluetoothDevice).getBatteryValue() == BleLockState.BATTERY_STATUS.BATTERY_GOOD || mBluetoothLeService.getBleManager(bluetoothDevice).mLock.getBleLockState().mState != BleLockState.STATE_DEVICE.KEY_CONFIRMATION) {
             return;
         }
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+        //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
             this.builder = new NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notifications_black_24dp).setContentTitle("Secuyou Smart Lock").setContentText("Battery Level for " + bluetoothDevice.getName() + "is below good").setPriority(0).setContentIntent(PendingIntent.getActivity(this, 0, intent, 0)).setAutoCancel(true);
             NotificationManagerCompat.from(this).notify(this.notificationId, this.builder.build());
-        }
+        //}
     }
 
     /* JADX INFO: Access modifiers changed from: protected */
@@ -351,6 +351,10 @@ public class MainActivity<E extends LocalBinder> extends AppCompatActivity imple
         super.onResume();
         if (!getSupportActionBar().isShowing()) {
             getSupportActionBar().show();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("MainActivity", "Missing required permissions");
+            return;
         }
         Intent intent = new Intent(this, BleMulticonnectProfileService.class);
         startService(intent);
@@ -419,14 +423,6 @@ public class MainActivity<E extends LocalBinder> extends AppCompatActivity imple
                 this.spec_purpose_frame.setVisibility(View.VISIBLE);
                 this.fragmentManager.beginTransaction().replace(R.id.specPurpose, new first_time()).commit();
                 return true;
-            case R.id.new_firmware /* 2131296459 */:
-                if (!mBluetoothLeService.mBluetoothAdapter.isEnabled()) {
-                    Toast.makeText(this, "Bluetooth is OFF - Please turn Bluetooth ON before you can add a lock!", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-//                startActivity(new Intent(this, DfuActivity.class));
-                getSupportActionBar().hide();
-                return true;
             default:
                 return true;
         }
@@ -484,7 +480,7 @@ public class MainActivity<E extends LocalBinder> extends AppCompatActivity imple
     }
 
     private void checkIfLocationIsSetTrue() {
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Please grant background location access");
             builder.setMessage("This app does not use your location, but it is required by Google to use Bluetooth. The Secuyou Smart Lock app will only work if 'Allowed all the time' permission is granted. If necessary, please go to Settings -> Applications -> Permissions and grant location to 'Allowed all the time'.");
@@ -523,7 +519,7 @@ public class MainActivity<E extends LocalBinder> extends AppCompatActivity imple
                 return;
             }
             Toast.makeText(this, "One or More Permissions are DENIED", Toast.LENGTH_SHORT).show();
-//            finish();
+            finish();
             return;
         }
         super.onRequestPermissionsResult(i, strArr, iArr);
@@ -614,12 +610,10 @@ public class MainActivity<E extends LocalBinder> extends AppCompatActivity imple
     }
 
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            String string = getString(R.string.channel_name);
-            String string2 = getString(R.string.channel_description);
-            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, string, NotificationManager.IMPORTANCE_DEFAULT);
-            notificationChannel.setDescription(string2);
-            ((NotificationManager) getSystemService(NotificationManager.class)).createNotificationChannel(notificationChannel);
-        }
+        String string = getString(R.string.channel_name);
+        String string2 = getString(R.string.channel_description);
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, string, NotificationManager.IMPORTANCE_DEFAULT);
+        notificationChannel.setDescription(string2);
+        ((NotificationManager) getSystemService(NotificationManager.class)).createNotificationChannel(notificationChannel);
     }
 }
